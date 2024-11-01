@@ -26,7 +26,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Tag(name = "Usuários")
 @RestController
 @RequestMapping("/v1/usuarios")
@@ -49,6 +51,7 @@ public class UsuarioController {
 		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
 		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	public ResponseEntity<UsuarioDTO> criarUsuario(@RequestBody CriarUsuarioDTO dto) {
+		log.info("Requisição recebida para criar usuário: {}", dto.getNomeUsuario());	
 		Usuario usuario = this.service.criarUsuario(dto);
 		UsuarioDTO UsuarioDTO = this.mapper.UsuarioToUsuarioDTO(usuario);
 		return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioDTO);
@@ -68,7 +71,10 @@ public class UsuarioController {
 		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "403", description = "Não autorizado", 
 		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<UsuarioDTO> atualizarUsuario(@RequestBody AtualizarUsuarioDTO dto) {
+		log.info("Requisição recebida para atualizar usuário: {}", dto.getNomeUsuario());
 		Usuario usuario = this.service.atualizarUsuario(dto);
 		UsuarioDTO UsuarioDTO = this.mapper.UsuarioToUsuarioDTO(usuario);
 		return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioDTO);
@@ -83,9 +89,11 @@ public class UsuarioController {
 		content = @Content(schema = @Schema(implementation = ApiRequestException.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "403", description = "Não autorizado", 
 		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+	    content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<Void> excluirTarefaPeloId(@PathVariable UUID id) {
+		log.info("Requisição recebida para excluir usuário pelo id: {}", id);
 		this.service.excluirTarefaPeloId(id);
-
 		return ResponseEntity.noContent().build();
 	}
 

@@ -17,7 +17,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Tag(name = "Autenticação")
 @RestController
 @RequestMapping("/auth")
@@ -33,11 +35,12 @@ public class AutenticacaoController {
 	
 	@PostMapping("/login")
     @Operation(summary = "Autenticação do usuário", description = "Autenticação do usuário")
-	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso",
+	@ApiResponse(responseCode = "200", description = "Autenticação com sucesso",
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 		content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<AuthenticationTokenDTO> login(@RequestBody AuthenticationRequestDTO dto) {
+		log.info("Requisição recebida para autenticação do usuário: {}", dto.getUsername());
 		UsernamePasswordAuthenticationToken userPasswordToken = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
 		this.authManager.authenticate(userPasswordToken);
 

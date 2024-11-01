@@ -45,7 +45,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Tag(name = "Tarefas")
 @RestController
 @RequestMapping("/v1/tarefas")
@@ -58,7 +60,62 @@ public class TarefaController {
         this.mapper = mapper;
         this.service = service;
 	}   
+	
+	@PostMapping("/criar")
+	@Operation(summary = "Cadastro de tarefa", 
+	           description = "Permite o cadastro de tarefas, mas não será possível criar uma nova tarefa com um título que já exista",
+	        	security = @SecurityRequirement(name = "bearerAuth"))
+	@ApiResponse(responseCode = "201", description = "Cadastro realizado com sucesso", 
+		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+	    content = @Content(schema = @Schema(defaultValue = "")))
+	public ResponseEntity<TarefaDTO> criarTarefa(@RequestBody CriarTarefaDTO dto) {
+		log.info("Requisição recebida para criar tarefa: {}", dto.getTitulo());
+		Tarefa tarefa = this.service.criarTarefa(dto);
+		TarefaDTO tarefaDTO = this.mapper.tarefaToTarefaDTO(tarefa);
+		return ResponseEntity.status(HttpStatus.CREATED).body(tarefaDTO);
+	}
 
+	@PutMapping("/atualizar")
+	@Operation(summary = "Atualização de usuário",
+			   description = "Permite o usuário logado atualizar apenas suas próprias tarefas",
+			   security = @SecurityRequirement(name = "bearerAuth"))
+	@ApiResponse(responseCode = "201", description = "Atualização realizada com sucesso", 
+		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
+	public ResponseEntity<TarefaDTO> atualizarTarefa(@RequestBody AtualizarTarefaDTO dto) {
+		log.info("Requisição recebida para atualizar tarefa: {}", dto.getTitulo());
+		Tarefa tarefa = this.service.atualizarTarefa(dto);
+		TarefaDTO tarefaDTO = this.mapper.tarefaToTarefaDTO(tarefa);
+		return ResponseEntity.status(HttpStatus.CREATED).body(tarefaDTO);
+	}
+
+	@DeleteMapping("/{id}")
+	@Operation(summary = "Excluir usuário pelo id", 
+			   description = "Permite que o usuário logado exclua apenas suas tarefas pelo id",
+			   security = @SecurityRequirement(name = "bearerAuth"))
+	@ApiResponse(responseCode = "204", description = "Exclusão realizado com sucesso")
+	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
+	public ResponseEntity<Void> excluirTarefaPeloId(@PathVariable UUID id) {
+		log.info("Requisição recebida para excluir tarefa pelo id: {}", id);
+		this.service.excluirTarefaPeloId(id);
+		return ResponseEntity.noContent().build();
+	}
+	
 	@GetMapping("/{id}")
 	@Operation(summary = "Consultar tarefa pelo id", 
 			   description = "Permite consultar tarefa pelo id",
@@ -66,7 +123,7 @@ public class TarefaController {
 	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso", 
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "204", description = "Sem conteúdo")
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 		content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<TarefaDTO> buscarPeloId(@PathVariable UUID id) {
 		Tarefa tarefa = this.service.buscarPeloId(id);
@@ -84,8 +141,8 @@ public class TarefaController {
     		   security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso",
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+	    content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<List<TarefaDTO>> listarTarefas() {
 		List<Tarefa> tarefas = this.service.listarTarefas();
 		
@@ -109,8 +166,8 @@ public class TarefaController {
     		   security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso",
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+	    content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<Page<TarefaDTO>> listarTarefasPaginadasComFiltro(
 			@RequestParam(required = false) @Parameter(description = "Id (Igual)") UUID id,
 			@RequestParam(required = false) @Parameter(description = "Usuário Id (Igual)") UUID usuarioId,
@@ -160,55 +217,5 @@ public class TarefaController {
 					.collect(Collectors.toList());
 
 		return ResponseEntity.ok(new PageImpl<>(tarefasDTO, pageable, tarefasDTO.stream().count()));
-	}
-	
-	@PostMapping("/criar")
-	@Operation(summary = "Cadastro de tarefa", 
-	           description = "Permite o cadastro de tarefas, mas não será possível criar uma nova tarefa com um título que já exista",
-	        	security = @SecurityRequirement(name = "bearerAuth"))
-	@ApiResponse(responseCode = "201", description = "Cadastro realizado com sucesso", 
-		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
-		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
-		mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
-	public ResponseEntity<TarefaDTO> criarTarefa(@RequestBody CriarTarefaDTO dto) {
-		Tarefa tarefa = this.service.criarTarefa(dto);
-		TarefaDTO tarefaDTO = this.mapper.tarefaToTarefaDTO(tarefa);
-		
-		return ResponseEntity.status(HttpStatus.CREATED).body(tarefaDTO);
-	}
-
-	@PutMapping("/atualizar")
-	@Operation(summary = "Atualização de usuário",
-			   description = "Permite o usuário logado atualizar apenas suas próprias tarefas",
-			   security = @SecurityRequirement(name = "bearerAuth"))
-	@ApiResponse(responseCode = "201", description = "Atualização realizada com sucesso", 
-		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
-		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
-		mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
-	public ResponseEntity<TarefaDTO> atualizarTarefa(@RequestBody AtualizarTarefaDTO dto) {
-		Tarefa tarefa = this.service.atualizarTarefa(dto);
-		TarefaDTO tarefaDTO = this.mapper.tarefaToTarefaDTO(tarefa);
-		return ResponseEntity.status(HttpStatus.CREATED).body(tarefaDTO);
-	}
-
-	@DeleteMapping("/{id}")
-	@Operation(summary = "Excluir usuário pelo id", 
-			   description = "Permite que o usuário logado exclua apenas suas tarefas pelo id",
-			   security = @SecurityRequirement(name = "bearerAuth"))
-	@ApiResponse(responseCode = "204", description = "Exclusão realizado com sucesso")
-	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
-		content = @Content(schema = @Schema(implementation = ApiRequestException.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
-	public ResponseEntity<Void> excluirTarefaPeloId(@PathVariable UUID id) {
-		this.service.excluirTarefaPeloId(id);
-
-		return ResponseEntity.noContent().build();
 	}
 }
