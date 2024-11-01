@@ -63,7 +63,7 @@ public class UsuarioService {
 			Usuario outroUsuario = this.buscarPeloNomeUsuario(dto.getNomeUsuario());
 			
 			if(outroUsuario != null && !outroUsuario.getId().equals(entity.getId()))
-				throw new BusinessException("O nome de usuário %s já está associado a outro usuário", dto.getNomeUsuario());
+				throw new AuthorizationException("O nome de usuário %s já está associado a outro usuário", dto.getNomeUsuario());
 		}
 		
 		entity.setNome(dto.getNome());
