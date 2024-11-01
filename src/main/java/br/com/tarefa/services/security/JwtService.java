@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import br.com.tarefa.dtos.security.AuthenticationRequestDTO;
 import br.com.tarefa.dtos.security.AuthenticationTokenDTO;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -27,13 +28,8 @@ public class JwtService {
 	@Value("${application.security.jwt.refresh-token.expiration}")
 	private long refreshExpiration;
 
-	public String extractUsername(String token) {
+	public String extractUsername(String token) throws ExpiredJwtException {
 		return extractClaim(token, Claims::getSubject);
-	}
-
-	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-		final Claims claims = extractAllClaims(token);
-		return claimsResolver.apply(claims);
 	}
 	
 	public AuthenticationTokenDTO generateToken(AuthenticationRequestDTO dto) {	
@@ -47,12 +43,21 @@ public class JwtService {
 				.refreshExpiresInMl(this.refreshExpiration)
 				.build();
 	}
+	
+	public boolean isTokenValid(String token, UserDetails userDetails) {
+		final String username = this.extractUsername(token);
+		return (username.equals(userDetails.getUsername())) && !this.isTokenExpired(token);
+	}
 
-	public String generateToken(Map<String, Object> extraClaims, AuthenticationRequestDTO dto) {
+	public boolean isTokenExpired(String token) {
+			return this.extractExpiration(token).before(new Date());
+	}
+
+	private String generateToken(Map<String, Object> extraClaims, AuthenticationRequestDTO dto) {
 		return buildToken(extraClaims, dto, jwtExpiration);
 	}
 
-	public String generateRefreshToken(AuthenticationRequestDTO dto) {
+	private String generateRefreshToken(AuthenticationRequestDTO dto) {
 		return buildToken(new HashMap<>(), dto, refreshExpiration);
 	}
 	
@@ -65,14 +70,10 @@ public class JwtService {
 				.signWith(this.getSignInKey(), SignatureAlgorithm.HS256)
 				.compact();
 	}
-
-	public boolean isTokenValid(String token, UserDetails userDetails) {
-		final String username = this.extractUsername(token);
-		return (username.equals(userDetails.getUsername())) && !this.isTokenExpired(token);
-	}
-
-	public boolean isTokenExpired(String token) {
-			return this.extractExpiration(token).before(new Date());
+	
+	private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = extractAllClaims(token);
+		return claimsResolver.apply(claims);
 	}
 
 	private Date extractExpiration(String token) {
