@@ -128,9 +128,8 @@ public class TarefaController {
 	public ResponseEntity<TarefaDTO> buscarPeloId(@PathVariable UUID id) {
 		Tarefa tarefa = this.service.buscarPeloId(id);
 		TarefaDTO tarefaDTO = this.mapper.tarefaToTarefaDTO(tarefa);
-		tarefaDTO.add(linkTo(methodOn(TarefaController.class).listarTarefas()).withRel(IanaLinkRelations.COLLECTION));
-			
 		Optional<TarefaDTO> optTarefaDto = Optional.ofNullable(tarefaDTO);
+		optTarefaDto.ifPresent(t -> tarefaDTO.add(linkTo(methodOn(TarefaController.class).listarTarefas()).withRel(IanaLinkRelations.COLLECTION)));
 
 		return optTarefaDto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
 	}
