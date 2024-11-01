@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -25,10 +26,13 @@ public class SecurityConfig {
 	
 	private final JwtAuthFilter jwtAuthFilter;
 	private final CustomUserDetailsService userDetailsService;
+	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	
-	public SecurityConfig(JwtAuthFilter jwtAuthFilter, CustomUserDetailsService userDetailsService) {
+	public SecurityConfig(JwtAuthFilter jwtAuthFilter, CustomUserDetailsService userDetailsService, 
+				CustomAuthenticationEntryPoint authenticationEntryPoint) {
 		this.jwtAuthFilter = jwtAuthFilter;
 		this.userDetailsService = userDetailsService;
+		this.authenticationEntryPoint = authenticationEntryPoint;
 	}
 	
 	@Bean
@@ -51,7 +55,7 @@ public class SecurityConfig {
 	
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {	     
-    	return http
+    	DefaultSecurityFilterChain defaultSecurityFilterChain = http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -69,9 +73,11 @@ public class SecurityConfig {
                         .antMatchers("/webjars/**").permitAll()
                         .antMatchers("/v1/usuarios/criar").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(handling -> handling.authenticationEntryPoint(authenticationEntryPoint))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();			
+                .build();
+		return defaultSecurityFilterChain;			
 		}
     
 
