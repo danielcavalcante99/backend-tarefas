@@ -19,7 +19,9 @@ import br.com.tarefa.exceptions.ResourceNotFoundException;
 import br.com.tarefa.mappers.UsuarioMapper;
 import br.com.tarefa.repositories.UsuarioRepository;
 import br.com.tarefa.utils.UsuarioUtils;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Validated
 public class UsuarioService {
@@ -40,7 +42,7 @@ public class UsuarioService {
 		return this.repository.findByNomeUsuario(nomeUsuario).orElse(null);
 	}
 	
-	public Usuario criarUsuario(@NotNull @Valid CriarUsuarioDTO dto) {
+	public Usuario criarUsuario(@NotNull @Valid CriarUsuarioDTO dto) throws BusinessException {
 		Usuario outroUsuario = this.buscarPeloNomeUsuario(dto.getNomeUsuario());
 		
 		if(outroUsuario != null)
@@ -51,12 +53,14 @@ public class UsuarioService {
 		entity.setSenha(new BCryptPasswordEncoder().encode(entity.getSenha()));
 		entity.setDataCriacao(dataAtual);
 		entity.setDataAtualizacao(dataAtual);
-
+		
 		this.repository.save(entity);
+		log.info("Usuário {} criado", entity.getNomeUsuario());
+		
 		return entity;
 	}
 	
-	public Usuario atualizarUsuario(@NotNull @Valid AtualizarUsuarioDTO dto) {
+	public Usuario atualizarUsuario(@NotNull @Valid AtualizarUsuarioDTO dto) throws AuthorizationException {
 		Usuario entity = this.buscarPeloNomeUsuario(UsuarioUtils.getUsuarioLogado());
 		
 		if(!entity.getNomeUsuario().equals(dto.getNomeUsuario())) {
@@ -72,10 +76,12 @@ public class UsuarioService {
 		entity.setDataAtualizacao(LocalDateTime.now());
 		
 		this.repository.save(entity);
+		log.info("Usuário do id {} foi atualizado", entity.getId());
+		
 		return entity;
 	}
 	
-	public void excluirTarefaPeloId(@NotNull @Valid UUID id) {
+	public void excluirTarefaPeloId(@NotNull @Valid UUID id) throws ResourceNotFoundException, AuthorizationException {
 		Usuario usuarioEntity = this.buscarPeloId(id);
 		
 		if(usuarioEntity == null)
@@ -85,6 +91,7 @@ public class UsuarioService {
 			throw new AuthorizationException("Apenas o próprio usuário tem permissão para se excluir");
 		
 		this.repository.deleteById(id);
+		log.info("Usuário pelo id {} foi excluído", id);
 	}
 
 }

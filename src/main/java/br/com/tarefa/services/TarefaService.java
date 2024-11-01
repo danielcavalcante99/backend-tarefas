@@ -23,7 +23,9 @@ import br.com.tarefa.exceptions.ResourceNotFoundException;
 import br.com.tarefa.mappers.TarefaMapper;
 import br.com.tarefa.repositories.TarefaRepository;
 import br.com.tarefa.utils.UsuarioUtils;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @Validated
 public class TarefaService {
@@ -54,7 +56,7 @@ public class TarefaService {
 		return this.repository.findAll();
 	}
 
-	public Tarefa criarTarefa(@NotNull @Valid CriarTarefaDTO dto) {
+	public Tarefa criarTarefa(@NotNull @Valid CriarTarefaDTO dto) throws BusinessException {
 		Tarefa tituloTarefa = this.buscarPeloTitulo(dto.getTitulo());
 		
 		if (tituloTarefa != null)
@@ -70,10 +72,12 @@ public class TarefaService {
 		tarefaEntity.setUsuario(usuario);
 		
 		this.repository.save(tarefaEntity);
+		log.info("Tarefa {} criada", tarefaEntity.getTitulo());
+		
 		return tarefaEntity;
 	}
 	
-	public Tarefa atualizarTarefa(@NotNull @Valid AtualizarTarefaDTO dto) {
+	public Tarefa atualizarTarefa(@NotNull @Valid AtualizarTarefaDTO dto) throws ResourceNotFoundException, AuthorizationException {
 		Tarefa tarefaEntity = this.buscarPeloId(dto.getId());
 		
 		if(tarefaEntity == null)
@@ -88,10 +92,12 @@ public class TarefaService {
 		tarefaEntity.setDataAtualizacao(LocalDateTime.now());
 		
 		this.repository.save(tarefaEntity);
+		log.info("Tarefa do id {} foi atualizada", tarefaEntity.getId());
+		
 		return tarefaEntity;
 	}
 	
-	public void excluirTarefaPeloId(@NotNull @Valid UUID id) {
+	public void excluirTarefaPeloId(@NotNull @Valid UUID id) throws ResourceNotFoundException, AuthorizationException {
 		Tarefa tarefaEntity = this.buscarPeloId(id);
 		
 		if(tarefaEntity == null)
@@ -101,6 +107,7 @@ public class TarefaService {
 			throw new AuthorizationException("Apenas o usuário que criou a tarefa tem permissão para excluí-la");
 		
 		this.repository.deleteById(id);
+		log.info("Tarefa pelo id {} foi excluída", id);
 	}
 
 }
