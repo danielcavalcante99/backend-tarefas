@@ -8,7 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,9 +46,7 @@ class ValidarCamposCriarTarefaDTOTest {
 
 	@Test
 	void testeVerificarTamanhoParametrosCriarTarefaDTO() {
-		CriarTarefaDTO dto = CriarTarefaDTO.builder()
-				.titulo(StringUtils.leftPad("a", 51))
-				.descricao(StringUtils.leftPad("a", 251)).build();
+		CriarTarefaDTO dto = createCriarTarefaDTO();
 
 		Set<ConstraintViolation<CriarTarefaDTO>> violations = this.validator.validate(dto);
 
@@ -70,5 +68,11 @@ class ValidarCamposCriarTarefaDTOTest {
 		});
 
 		assertThat(violations.stream().count()).isEqualTo(2);
+	}
+
+	private CriarTarefaDTO createCriarTarefaDTO() {
+		return CriarTarefaDTO.builder()
+				.titulo(RandomStringUtils.randomAlphanumeric(51))
+				.descricao(RandomStringUtils.randomAlphanumeric(251)).build();
 	}
 }

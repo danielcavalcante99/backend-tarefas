@@ -1,12 +1,13 @@
 package br.com.tarefa.services.security;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -35,34 +36,37 @@ class CustomUserDetailsServiceTest {
 	void testeCarregarUsuarioPeloNomeUsuarioComSucesso() {
 		Usuario usuario = Usuario.builder()
 				.id(UUID.randomUUID())
-				.nome("daniel")
-				.nomeUsuario("danielsilva")
-				.senha(new BCryptPasswordEncoder().encode("12345678"))
+				.nome(RandomStringUtils.randomAlphabetic(10))
+				.nomeUsuario(RandomStringUtils.randomAlphabetic(10))
+				.senha(new BCryptPasswordEncoder().encode(RandomStringUtils.randomAlphabetic(10)))
 				.dataAtualizacao(LocalDateTime.now())
 				.dataCriacao(LocalDateTime.now())
 				.build();
-
+		
+		// Mockando o comportamento do serviço na busca pelo nome de usuário
 		when(this.usuarioService.buscarPeloNomeUsuario(usuario.getNomeUsuario())).thenReturn(usuario);
 
 		UserDetails userDetails = this.service.loadUserByUsername(usuario.getNomeUsuario());
 
-		assertAll(() -> assertEquals(userDetails.getUsername(), usuario.getNomeUsuario()),
-				() -> assertEquals(userDetails.getPassword(), usuario.getSenha()));
+		assertEquals(usuario.getNomeUsuario(), userDetails.getUsername());
+		assertEquals(usuario.getSenha(), userDetails.getPassword());
 
 	}
 
 	@Test
-	void testeTentarCarregarUsuarioPeloNomeUsuario() {
-		String nomeUsuario = "danielsilva";
+	void testeTentarCarregarUsuarioPeloNomeUsuarioQueNaoExiste() {
+		String nomeUsuario = RandomStringUtils.randomAlphabetic(10);
 
+		// Mockando o comportamento do serviço na busca pelo nome de usuário
 		when(this.usuarioService.buscarPeloNomeUsuario(nomeUsuario)).thenReturn(null);
-
-		try {
+		
+		UsernameNotFoundException exception = assertThrows(UsernameNotFoundException.class, () -> {
 			this.service.loadUserByUsername(nomeUsuario);
+        });
 
-		} catch (UsernameNotFoundException e) {
-			assertEquals(e.getMessage(), String.format("Usuário %s desconhecido", nomeUsuario));
-		}
+		assertEquals(String.format(
+				"O token informado está associado ao usuário '%s', que não está mais registrado na base de dados",
+				nomeUsuario), exception.getMessage());
 	}
 
 }

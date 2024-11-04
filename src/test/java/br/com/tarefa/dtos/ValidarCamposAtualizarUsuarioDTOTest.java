@@ -8,7 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,10 +50,7 @@ class ValidarCamposAtualizarUsuarioDTOTest {
 
 	@Test
 	void testeVerificarTamanhoFormatoParametrosAtualizarUsuarioDTO() {
-		AtualizarUsuarioDTO dto = AtualizarUsuarioDTO.builder()
-				.nome(StringUtils.leftPad("a", 51))
-				.nomeUsuario(StringUtils.leftPad("a", 51))
-				.senha("1234567").build();
+		AtualizarUsuarioDTO dto = createAtualizarUsuarioDTO();
 
 		Set<ConstraintViolation<AtualizarUsuarioDTO>> violations = this.validator.validate(dto);
 
@@ -80,6 +77,13 @@ class ValidarCamposAtualizarUsuarioDTOTest {
 		});
 
 		assertThat(violations.stream().count()).isEqualTo(3);
+	}
+
+	private AtualizarUsuarioDTO createAtualizarUsuarioDTO() {
+		return AtualizarUsuarioDTO.builder()
+				.nome(RandomStringUtils.randomAlphanumeric(51))
+				.nomeUsuario(RandomStringUtils.randomAlphanumeric(51))
+				.senha(RandomStringUtils.randomAlphanumeric(7)).build();
 	}
 	
 }

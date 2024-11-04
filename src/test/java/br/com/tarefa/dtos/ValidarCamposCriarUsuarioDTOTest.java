@@ -8,7 +8,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,10 +50,7 @@ class ValidarCamposCriarUsuarioDTOTest {
 
 	@Test
 	void testeVerificarTamanhoFormatoParametrosCriarUsuarioDTO() {
-		CriarUsuarioDTO dto = CriarUsuarioDTO.builder()
-				.nome(StringUtils.leftPad("a", 51))
-				.nomeUsuario(StringUtils.leftPad("a", 51))
-				.senha("1234567").build();
+		CriarUsuarioDTO dto = createCriarUsuarioDTO();
 
 		Set<ConstraintViolation<CriarUsuarioDTO>> violations = this.validator.validate(dto);
 
@@ -80,6 +77,13 @@ class ValidarCamposCriarUsuarioDTOTest {
 		});
 
 		assertThat(violations.stream().count()).isEqualTo(3);
+	}
+
+	private CriarUsuarioDTO createCriarUsuarioDTO() {
+		return CriarUsuarioDTO.builder()
+				.nome(RandomStringUtils.randomAlphanumeric(51))
+				.nomeUsuario(RandomStringUtils.randomAlphanumeric(51))
+				.senha(RandomStringUtils.randomAlphanumeric(7)).build();
 	}
 	
 }
