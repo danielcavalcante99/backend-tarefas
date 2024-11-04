@@ -22,8 +22,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FiltroTarefaDTO implements Serializable {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -8723267248649356380L;
+
 	private UUID id;
 	
 	@Size(max = 50, message = "O campo 'titulo' é permitido um máximo de 50 caracteres")

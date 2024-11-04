@@ -20,8 +20,8 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class CriarTarefaDTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1895243719994180822L;
+
 	@Size(max = 50, message = "O campo 'titulo' é permitido um máximo de 50 caracteres")
 	@NotBlank(message = "Campo 'titulo' é obrigatório")
 	private String titulo;

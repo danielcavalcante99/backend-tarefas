@@ -20,8 +20,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CriarUsuarioDTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 9212666980865037523L;
+
 	@NotBlank(message = "Campo 'nome' é obrigatório")
 	@Size(max = 50, message = "O campo 'nome' é permitido um máximo de 50 caracteres")
 	private String nome;

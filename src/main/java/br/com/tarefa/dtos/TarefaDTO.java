@@ -22,7 +22,7 @@ import lombok.With;
 @NoArgsConstructor(staticName = "create")
 public class TarefaDTO extends RepresentationModel<TarefaDTO>  implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -870760242503017379L;
 	
 	private UUID id;
 	private String titulo;

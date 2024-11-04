@@ -18,8 +18,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioDTO implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+	
+	private static final long serialVersionUID = 5133501006561968929L;
 	
 	private UUID id;
 	private String nome;
