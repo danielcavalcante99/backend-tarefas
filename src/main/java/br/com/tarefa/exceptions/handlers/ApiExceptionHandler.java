@@ -14,12 +14,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import br.com.tarefa.exceptions.AuthorizationException;
 import br.com.tarefa.exceptions.BusinessException;
 import br.com.tarefa.exceptions.ResourceNotFoundException;
+import br.com.tarefa.exceptions.RevokeTokenException;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
+	
+    @ExceptionHandler(value = {RevokeTokenException.class})
+    public ResponseEntity<ApiRequestException> haddlerRevokeTokenException(RevokeTokenException e, HttpServletRequest request) {
+
+        ApiRequestException apiException = ApiRequestException.builder()
+                .title("Bad Request")
+                .message(e.getMessage())
+                .httpStatus(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now()).build();
+
+        this.logError(HttpStatus.BAD_REQUEST, e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiException);
+    }
 	
     @ExceptionHandler(value = {AuthorizationException.class})
     public ResponseEntity<ApiRequestException> haddlerAuthorizationException(AuthorizationException e, HttpServletRequest request) {
