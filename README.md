@@ -1,4 +1,4 @@
-### Backend Tarefa  
+### Backend Tarefa  👨🏻‍💻
 API RESTful que permitirá aos usuários gerenciar uma lista de tarefas
 
 <b>Versão Java:</b> 8 
@@ -8,13 +8,14 @@ API RESTful que permitirá aos usuários gerenciar uma lista de tarefas
 </br>
 
 ### Introdução
-1) Tecnologias utilizadas
-2) Requisitos para montagem de ambiente
-3) Como configurar o projeto no ambiente local (Spring Tools)
-4) OpenAPI | Swagger (Documentação dos endpoints)
-5) Como Autenticar para acessar os demais endpoints
-6) Acessar o pgAdmin
-7) Acessar o Redis pelo docker
+1) 🔴 Tecnologias utilizadas
+2) 🔴 Requisitos para montagem de ambiente
+3) 🔴 Como configurar o projeto no ambiente local (Spring Tools)
+4) 🔴 Como configurar o projeto no ambiente local (Intellij IDEA)
+5) 🔴 OpenAPI | Swagger (Documentação dos endpoints)
+6) 🔴 Como Autenticar para acessar os demais endpoints
+7) 🔴 Acessar o pgAdmin
+8) 🔴 Acessar o Redis pelo docker
 
 ##
 ### 1) Tecnologias utilizadas
@@ -50,14 +51,14 @@ O teste de unidade com JUnit é uma prática fundamental no desenvolvimento de s
 
 ```plaintext
 ├─── tarefas
-  └─── config
+  └─── config 
   │      └─── cache 
-  │      └─── security
-  │      └─── openapi
-  └─── controllers
-  └─── dtos
-  └─── mappers
-  └─── entities
+  │      └─── security 
+  │      └─── openapi 
+  └─── controllers 
+  └─── dtos 
+  └─── mappers 
+  └─── entities 
   │      └─── enums
   └─── exceptions
   │      └─── handlers
@@ -69,29 +70,78 @@ O teste de unidade com JUnit é uma prática fundamental no desenvolvimento de s
   └── tests
 ```
 
-
-
 ##
 ### 2) Requisitos para montagem de ambiente
 - Java 8;
 - Lombok configurado na IDE;
-  
+
 ##
 ### 3) Como configurar o projeto no ambiente local (Spring Tools)
-- 3.1 Após clonar e importar o projeto como maven, é necessário entrar na pasta raiz do projeto e rodar esse comando:
+#### 3.1 Selecione o JDK 8: </br>
+Acesse Window -> Preferences -> Java -> Compiler e selecione o JDK 8:
+![image](https://github.com/user-attachments/assets/e3e8a72c-fef9-4145-b28d-3adc57282ae0)
+
+#### 3.2 Verifique a Configuração do Plugin Lombok: : </br>
+Certifique-se de que o plugin Lombok está corretamente configurado.
+
+#### 3.3 Execute o Comando Maven: </br>
+Após clonar e importar o projeto como Maven, navegue até a pasta raiz do projeto e execute o seguinte comando:
 ~~~
 mvn clean package -DskipTests
 ~~~
-- 3.2 Depois da um <b>maven update</b> e <b>refresh</b> no projeto para verificar se foi gerado no target esses arquivos:
+
+#### 3.4 Faça o Maven Update:
+![image](https://github.com/user-attachments/assets/d1162ca4-f525-43bf-8025-8d587a7f4335)
+
+#### 3.5 Verifique a Geração da Pasta Target: </br>
+Atualize o projeto para confirmar se a pasta target/generated-sources foi criada e contém os arquivos esperados:
 ![image](https://github.com/user-attachments/assets/b7b392be-e5d2-441a-bcba-78a91e267775)
-- 3.3 Ainda na pasta raiza do projeto, rodar o comando do docker compose para subir os containers do postgres, pgadmin e redis:
+
+#### 3.6 Inicie os Contêineres com Docker Compose: </br>
+Ainda na pasta raiz do projeto, execute o comando Docker Compose para iniciar os contêineres do PostgreSQL, PgAdmin e Redis:
 ~~~
 docker compose up -d
 ~~~
-- 3.4 Pronto agora pode startar a aplicação
+
+#### ✔️ 3.7 Pronto agora pode startar a aplicação no Spring Tools
 
 ##
-### 4 OpenAPI | Swagger (Documentação dos endpoints)
+### 4) Como configurar o projeto no ambiente local (Intellij IDEA)
+#### 4.1 Selecione o JDK 8: </br>
+Acesse File -> Project Structure e selecione o JDK 8:
+![image](https://github.com/user-attachments/assets/ac0cace2-f7fd-461e-9626-b3ac054af497)
+
+#### 4.2 Verifique a Configuração do Plugin Lombok: </br>
+Certifique-se de que o plugin Lombok está corretamente configurado em File -> Settings:
+![image](https://github.com/user-attachments/assets/82964cbc-05bc-4cfb-afea-e8ace1371928)
+
+#### 4.3 Execute o Comando Maven: </br>
+Após clonar e importar o projeto como Maven, navegue até a pasta raiz do projeto e execute o seguinte comando:
+~~~
+mvn clean package -DskipTests
+~~~
+
+#### 4.4 Verifique a Geração da Pasta Target: </br>
+Atualize o projeto para confirmar se a pasta target/generated-sources foi criada e contém os arquivos esperados:
+![image](https://github.com/user-attachments/assets/1bf3a069-2284-4463-8f1e-a880f4b3e304)
+
+#### 4.5 Configure o módulo: </br>
+Vá novamente em File -> Project Structure -> Modules e marque a pasta target/generated-sources como <b>sources</b>:
+![image](https://github.com/user-attachments/assets/70256f1d-406a-490a-899a-3957ab2177ac)
+
+#### 4.6 Faça o Reload do Maven: </br>
+![image](https://github.com/user-attachments/assets/6eac8019-3c46-479f-a957-65beb602ec5d)
+
+#### 4.7 Inicie os Contêineres com Docker Compose: </br>
+Ainda na pasta raiz do projeto, execute o comando Docker Compose para iniciar os contêineres do PostgreSQL, PgAdmin e Redis:
+~~~
+docker compose up -d
+~~~
+
+#### ✔️ 4.8 Pronto agora pode startar a aplicação no Intellij IDEA
+
+##
+### 5 OpenAPI | Swagger (Documentação dos endpoints)
 Esta é a documentação da API RESTful. Ao clicar em qualquer serviço listado, você poderá expandir a seção correspondente para visualizar uma descrição detalhada de como o serviço funciona, incluindo informações sobre:
 
 - Métodos HTTP: Quais métodos (GET, POST, PUT, DELETE) são suportados.
@@ -106,45 +156,45 @@ Explore cada serviço para entender melhor sua funcionalidade.
 ![image](https://github.com/user-attachments/assets/3ae6700d-eeff-490d-85c1-fa23f799dec8)
 
 ##
-### 5 Como Autenticar para acessar os demais endpoints
+### 6 Como Autenticar para acessar os demais endpoints
 
-- 5.1 Primeiro vocês irão criar um usuário
+#### 6.1 Primeiro vocês irão criar um usuário
 ![image](https://github.com/user-attachments/assets/7ce3f97b-b148-4734-897d-4d33d603b4bc)
 
-- 5.2 Efetuar o login
+#### 6.2 Efetuar o login
 ![image](https://github.com/user-attachments/assets/05b180ab-911d-4fa3-8335-086a71125c9d)
 ![image](https://github.com/user-attachments/assets/6d688f3c-b528-4cee-92b6-2b56df5d41e6)
 
-- 5.3 Informar o bearer token no header
+#### 6.3 Informar o bearer token no header </br>
 ![image](https://github.com/user-attachments/assets/595ae41d-d024-4e1d-888e-6b4f4d5c5b92)
 
-Pronto agora você consegue acessar os demais endpoints que exigem autenticação.
+✔️ Pronto agora você consegue acessar os demais endpoints que exigem autenticação.
 
 ##
-### 6 Acessar o pgAdmin
+### 7 Acessar o pgAdmin
 <b>URL:</b> http://localhost:5050/
 
-- 6.1 Defina a senha mestre como <b>postgresl</b>:
+#### 7.1 Defina a senha mestre como <b>postgresl</b>:
 ![image](https://github.com/user-attachments/assets/19bb09b0-84a1-47ca-a5ee-624057b2e6ed)
-- 6.2 Configure um novo servidor:
+#### 7.2 Configure um novo servidor:
 ![image](https://github.com/user-attachments/assets/8af569c0-c263-4c46-8497-2e1a3db767d0)
-- 6.3 Para a autenticação, utilize a senha postgres:
+#### 7.3 Para a autenticação, utilize a senha postgres: 
 ![image](https://github.com/user-attachments/assets/207c4564-b254-46e0-ba78-c65bfa0ce091)
-- 6.4 Pronto pgAdmin configurado: </br>
+#### 7.4 Pronto pgAdmin configurado: </br>
 ![image](https://github.com/user-attachments/assets/88114c1d-3aad-461c-8edf-db6f1143afe6)
 
 ##
-### 7 Acessar o Redis pelo docker
+### 8 Acessar o Redis pelo docker
 
-- 7.1 Acessar o container redis:
+#### 8.1 Acessar o container redis:
 ~~~
 docker exec -it {id_container} bash
 ~~~
-- 7.2 Autentiticar:
+#### 8.2 Autentiticar:
 ~~~
 redis-cli -a redis
 ~~~
-- 7.3 Verifique se há registros no cache. Se você já chamou os serviços que armazenam dados no cache e não encontrou nenhum registro, recomendo sair do contêiner e entrar novamente:
+#### 8.3 Verifique se há registros no cache. Se você já chamou os serviços que armazenam dados no cache e não encontrou nenhum registro, recomendo sair do contêiner e entrar novamente:
 ~~~
 keys *
 ~~~
