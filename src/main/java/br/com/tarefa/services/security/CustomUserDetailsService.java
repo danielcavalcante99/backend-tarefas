@@ -23,7 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         Usuario usuario = this.service.buscarPeloNomeUsuario(username); 
         
         if(usuario == null) {
-            throw new UsernameNotFoundException(String.format("Usuário %s desconhecido", username));
+			throw new UsernameNotFoundException(String.format(
+					"O token informado está associado ao usuário '%s', que não está mais registrado na base de dados",
+					username));
         }
         
         return User.withUsername(usuario.getNomeUsuario())
