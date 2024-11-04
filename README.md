@@ -10,7 +10,7 @@ API RESTful que permitirá aos usuários gerenciar uma lista de tarefas
 ### Introdução
 1) Tecnologias utilizadas
 2) Requisitos para montagem de ambiente
-3) Como configurar o projeto no ambiente local
+3) Como configurar o projeto no ambiente local (Spring Tools)
 4) OpenAPI | Swagger (Documentação dos endpoints)
 5) Como Autenticar para acessar os demais endpoints
 6) Acessar o pgAdmin
@@ -77,12 +77,12 @@ O teste de unidade com JUnit é uma prática fundamental no desenvolvimento de s
 - Lombok configurado na IDE;
   
 ##
-### 3) Como configurar o projeto no ambiente local
+### 3) Como configurar o projeto no ambiente local (Spring Tools)
 - 3.1 Após clonar e importar o projeto como maven, é necessário entrar na pasta raiz do projeto e rodar esse comando:
 ~~~
 mvn clean package -DskipTests
 ~~~
-- 3.2 Depois da o refresh no projeto para verificar se foi gerado no target esses arquivos:
+- 3.2 Depois da um <b>maven update</b> e <b>refresh</b> no projeto para verificar se foi gerado no target esses arquivos:
 ![image](https://github.com/user-attachments/assets/b7b392be-e5d2-441a-bcba-78a91e267775)
 - 3.3 Ainda na pasta raiza do projeto, rodar o comando do docker compose para subir os containers do postgres, pgadmin e redis:
 ~~~
