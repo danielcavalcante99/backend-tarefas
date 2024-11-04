@@ -63,7 +63,13 @@ public class TarefaController {
 	
 	@PostMapping("/criar")
 	@Operation(summary = "Cadastro de tarefa", 
-	           description = "Permite o cadastro de tarefas, mas não será possível criar uma nova tarefa com um título que já exista",
+	           description = "Cria uma nova tarefa com base nas informações fornecidas " 
+		        			 +"Este endpoint verifica se já existe uma tarefa com o mesmo título. Se um título duplicado "
+		        			 +"for encontrado, não será permitido o cadastro. Caso contrário, uma nova tarefa "
+		        			 +"será criada e persistida no banco de dados. O status inicialmente "
+		        			 +"da tarefa nasce como PENDENTE e tarefa é associada ao usuário atualmente logado, logo após " 
+		        			 +"todas as entradas do cache 'listarTarefas' são removidas, garantindo que a próxima consulta " 
+		        			 +"reflita as mudanças.",
 	        	security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "201", description = "Cadastro realizado com sucesso", 
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
@@ -72,6 +78,8 @@ public class TarefaController {
 		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 	    content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<TarefaDTO> criarTarefa(@RequestBody CriarTarefaDTO dto) {
 		log.info("Requisição recebida para criar tarefa: {}", dto.getTitulo());
 		Tarefa tarefa = this.service.criarTarefa(dto);
@@ -80,18 +88,28 @@ public class TarefaController {
 	}
 
 	@PutMapping("/atualizar")
-	@Operation(summary = "Atualização de usuário",
-			   description = "Permite o usuário logado atualizar apenas suas próprias tarefas",
+	@Operation(summary = "Atualização de tarefa",
+			   description = "Atualiza uma tarefa existente com base nas informações fornecidas. "
+							 +"Este endpoint realiza a atualização de uma tarefa com base nas informações fornecidas. "
+							 +"Antes de realizar a atualização, é verificado se a tarefa existe, "
+							 +"se o usuário que está tentando realizar a atualização é o mesmo que criou a tarefa "
+							 +"e se o título da tarefa não conflita com outra tarefa existente de outro usuário. "
+							 +"Ao atualizar a tarefa, todas as entradas do cache 'listarTarefas' são removidas, "
+							 +"garantindo que a próxima consulta reflita as mudanças. O cache para a tarefa específica também é "
+							 +"atualizado com as novas informações.",
 			   security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "201", description = "Atualização realizada com sucesso", 
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "401", description = "Não autenticado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
 	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
 		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
 		mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
-	@ApiResponse(responseCode = "401", description = "Não autenticado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<TarefaDTO> atualizarTarefa(@RequestBody AtualizarTarefaDTO dto) {
 		log.info("Requisição recebida para atualizar tarefa: {}", dto.getTitulo());
 		Tarefa tarefa = this.service.atualizarTarefa(dto);
@@ -100,16 +118,25 @@ public class TarefaController {
 	}
 
 	@DeleteMapping("/{id}")
-	@Operation(summary = "Excluir usuário pelo id", 
-			   description = "Permite que o usuário logado exclua apenas suas tarefas pelo id",
+	@Operation(summary = "Excluir tarefa pelo id", 
+			   description = "Exclui uma tarefa com base no ID fornecido."
+							+"Este endpoint verifica se a tarefa existe e se o usuário que está tentando "
+							+"excluí-la é o mesmo que a criou. Se a tarefa não existir, ou se o usuário "
+							+"não tiver permissão para excluí-la, não será permitido a operação. "
+							+"Após a exclusão, a tarefa conforme seu ID é removida do cache 'tarefas' "
+							+"e também todas as entradas do cache 'listarTarefas' são removidas, "
+							+"garantindo que a próxima consulta reflita as mudanças.",
 			   security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "204", description = "Exclusão realizado com sucesso")
-	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
-		content = @Content(schema = @Schema(implementation = ApiRequestException.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
-	@ApiResponse(responseCode = "403", description = "Não autorizado", 
-		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "403", description = "Não autorizado", 
+		content = @Content(schema = @Schema(defaultValue = "")))
+	@ApiResponse(responseCode = "404", description = "Recurso não encotrado", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
 	public ResponseEntity<Void> excluirTarefaPeloId(@PathVariable UUID id) {
 		log.info("Requisição recebida para excluir tarefa pelo id: {}", id);
 		this.service.excluirTarefaPeloId(id);
@@ -118,11 +145,16 @@ public class TarefaController {
 	
 	@GetMapping("/{id}")
 	@Operation(summary = "Consultar tarefa pelo id", 
-			   description = "Permite consultar tarefa pelo id",
+			   description = "Recupera uma tarefa com base no ID fornecido. Qualquer usuário pode visualizar as tarefas de outros usuários, "
+						    +"este endpoint verifica se a tarefa existe no banco de dados e, se encontrada, a armazena em cache "
+						    +"para futuras consultas. Se a tarefa não existir, não será armazenada no cache.",
 	           security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso", 
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "204", description = "Sem conteúdo")
+	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 		content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<TarefaDTO> buscarPeloId(@PathVariable UUID id) {
@@ -136,10 +168,15 @@ public class TarefaController {
 	
 	@GetMapping
     @Operation(summary = "Listar tarefas", 
-			   description = "Permite consultar a listagem de tarefas",
+			   description = "Recupera uma lista de todas as tarefas armazenadas. Qualquer usuário pode visualizar as tarefas de outros usuários,"
+						    +"este endpoint busca todas as tarefas no banco de dados e, se encontrada, armazena o resultado em cache. "
+						    +"Isso melhora a performance em chamadas subsequentes, evitando consultas repetidas ao banco de dados.",
     		   security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso",
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 	    content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<List<TarefaDTO>> listarTarefas() {
@@ -161,10 +198,16 @@ public class TarefaController {
 	
 	@GetMapping("/paginado")
     @Operation(summary = "Listar tarefas com filtro", 
-			   description = "Permite consultar tarefas com ou sem filtros",
+			   description = "Recupera uma lista de tarefas aplicando os filtros especificados. Qualquer usuário pode visualizar as tarefas de outros usuários,"
+							+"este endpoint busca todas as tarefas conforme os argumentos aplicados ao filtro. "
+						    +"Somente em caso de existir tarefas, os resultados são armazenados em cache "
+							+"para melhorar a performance em chamadas subsequentes com os mesmos filtros.",
     		   security = @SecurityRequirement(name = "bearerAuth"))
 	@ApiResponse(responseCode = "200", description = "Busca realizada com sucesso",
 		content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
+	@ApiResponse(responseCode = "400", description = "Requisição inválida", 
+		content = @Content(schema = @Schema(implementation = ApiRequestException.class), 
+		mediaType = MediaType.APPLICATION_JSON_VALUE))
 	@ApiResponse(responseCode = "401", description = "Não autenticado", 
 	    content = @Content(schema = @Schema(defaultValue = "")))
 	public ResponseEntity<Page<TarefaDTO>> listarTarefasPaginadasComFiltro(
