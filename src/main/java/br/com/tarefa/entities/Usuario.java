@@ -1,7 +1,7 @@
 package br.com.tarefa.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +15,6 @@ import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -25,8 +24,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
-	
+public class Usuario implements Serializable {
+
+	private static final long serialVersionUID = 4370546423538526316L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private UUID id;
@@ -46,8 +47,7 @@ public class Usuario {
 	@Column(nullable = false)
 	private LocalDateTime dataAtualizacao;
 	
-	@Default
 	@OneToMany(mappedBy = "usuario", orphanRemoval = true)
-	private List<Tarefa> tarefas = new ArrayList<>();
+	private List<Tarefa> tarefas;
 
 }

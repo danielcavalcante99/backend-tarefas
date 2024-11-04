@@ -1,5 +1,6 @@
 package br.com.tarefa.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -27,7 +28,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "tarefas")
-public class Tarefa {
+public class Tarefa implements Serializable {
+
+	private static final long serialVersionUID = -4878504104191449400L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,7 +53,7 @@ public class Tarefa {
 	private StatusTarefa status;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuario_id")
+	@JoinColumn(name = "usuario_id", nullable = false)
 	private Usuario usuario;
 
 }
