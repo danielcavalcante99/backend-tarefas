@@ -1,15 +1,15 @@
 package br.com.tarefa.config.security;
 
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,19 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import br.com.tarefa.services.security.CustomUserDetailsService;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 	
 	private final JwtAuthFilter jwtAuthFilter;
 	private final CustomUserDetailsService userDetailsService;
-	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	
-	public SecurityConfig(JwtAuthFilter jwtAuthFilter, CustomUserDetailsService userDetailsService, 
-				CustomAuthenticationEntryPoint authenticationEntryPoint) {
+	public SecurityConfig(JwtAuthFilter jwtAuthFilter, CustomUserDetailsService userDetailsService) {
 		this.jwtAuthFilter = jwtAuthFilter;
 		this.userDetailsService = userDetailsService;
-		this.authenticationEntryPoint = authenticationEntryPoint;
 	}
 	
 	@Bean
@@ -57,28 +52,21 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {	     
     	DefaultSecurityFilterChain defaultSecurityFilterChain = http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
+                .cors().and()
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .antMatchers("/actuator/**").permitAll()
                         .antMatchers("/swagger-ui/**").permitAll()
-                        .antMatchers("/v2/api-docs").permitAll()
-                        .antMatchers("/v3/api-docs").permitAll()
                         .antMatchers("/v3/api-docs/**").permitAll()
-                        .antMatchers("/auth/**").permitAll()
-                        .antMatchers("/swagger-resources").permitAll()
-                        .antMatchers("/swagger-resources/**").permitAll()
-                        .antMatchers("/configuration/ui").permitAll()
-                        .antMatchers("/configuration/security").permitAll()
-                        .antMatchers("/webjars/**").permitAll()
+                        .antMatchers("/auth/login").permitAll()
                         .antMatchers("/v1/usuarios/criar").permitAll()
                         .anyRequest().authenticated())
-                .exceptionHandling(handling -> handling.authenticationEntryPoint(authenticationEntryPoint))
+                .exceptionHandling(handling -> handling
+                		.authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 		return defaultSecurityFilterChain;			
 		}
-    
 
 }
