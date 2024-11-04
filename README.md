@@ -79,7 +79,7 @@ O teste de unidade com JUnit é uma prática fundamental no desenvolvimento de s
 ### 3) Como configurar o projeto no ambiente local (Spring Tools)
 #### 3.1 Selecione o JDK 8: </br>
 Acesse Window -> Preferences -> Java -> Compiler e selecione o JDK 8:
-![image](https://github.com/user-attachments/assets/e3e8a72c-fef9-4145-b28d-3adc57282ae0)
+<img src="https://github.com/user-attachments/assets/e3e8a72c-fef9-4145-b28d-3adc57282ae0" width="500px">
 
 #### 3.2 Verifique a Configuração do Plugin Lombok: : </br>
 Certifique-se de que o plugin Lombok está corretamente configurado.
@@ -91,11 +91,11 @@ mvn clean package -DskipTests
 ~~~
 
 #### 3.4 Faça o Maven Update:
-![image](https://github.com/user-attachments/assets/d1162ca4-f525-43bf-8025-8d587a7f4335)
+<img src="https://github.com/user-attachments/assets/d1162ca4-f525-43bf-8025-8d587a7f4335" width="500px">
 
 #### 3.5 Verifique a Geração da Pasta Target: </br>
 Atualize o projeto para confirmar se a pasta target/generated-sources foi criada e contém os arquivos esperados:
-![image](https://github.com/user-attachments/assets/b7b392be-e5d2-441a-bcba-78a91e267775)
+<img src="https://github.com/user-attachments/assets/b7b392be-e5d2-441a-bcba-78a91e267775" width="500px">
 
 #### 3.6 Inicie os Contêineres com Docker Compose: </br>
 Ainda na pasta raiz do projeto, execute o comando Docker Compose para iniciar os contêineres do PostgreSQL, PgAdmin e Redis:
@@ -107,13 +107,13 @@ docker compose up -d
 
 ##
 ### 4) Como configurar o projeto no ambiente local (Intellij IDEA)
-#### 4.1 Selecione o JDK 8: </br>
-Acesse File -> Project Structure e selecione o JDK 8:
-![image](https://github.com/user-attachments/assets/ac0cace2-f7fd-461e-9626-b3ac054af497)
+#### 4.1 Selecione o JDK 8: 
+Acesse File -> Project Structure e selecione o JDK 8:</br>
+<img src="https://github.com/user-attachments/assets/ac0cace2-f7fd-461e-9626-b3ac054af497" width="500px">
 
 #### 4.2 Verifique a Configuração do Plugin Lombok: </br>
 Certifique-se de que o plugin Lombok está corretamente configurado em File -> Settings:
-![image](https://github.com/user-attachments/assets/82964cbc-05bc-4cfb-afea-e8ace1371928)
+<img src="https://github.com/user-attachments/assets/82964cbc-05bc-4cfb-afea-e8ace1371928" width="500px">
 
 #### 4.3 Execute o Comando Maven: </br>
 Após clonar e importar o projeto como Maven, navegue até a pasta raiz do projeto e execute o seguinte comando:
@@ -123,14 +123,14 @@ mvn clean package -DskipTests
 
 #### 4.4 Verifique a Geração da Pasta Target: </br>
 Atualize o projeto para confirmar se a pasta target/generated-sources foi criada e contém os arquivos esperados:
-![image](https://github.com/user-attachments/assets/1bf3a069-2284-4463-8f1e-a880f4b3e304)
+<img src="https://github.com/user-attachments/assets/1bf3a069-2284-4463-8f1e-a880f4b3e304" width="500px">
 
 #### 4.5 Configure o módulo: </br>
 Vá novamente em File -> Project Structure -> Modules e marque a pasta target/generated-sources como <b>sources</b>:
-![image](https://github.com/user-attachments/assets/70256f1d-406a-490a-899a-3957ab2177ac)
+<img src="https://github.com/user-attachments/assets/70256f1d-406a-490a-899a-3957ab2177ac" width="500px">
 
 #### 4.6 Faça o Reload do Maven: </br>
-![image](https://github.com/user-attachments/assets/6eac8019-3c46-479f-a957-65beb602ec5d)
+<img src="https://github.com/user-attachments/assets/6eac8019-3c46-479f-a957-65beb602ec5d" width="500px">
 
 #### 4.7 Inicie os Contêineres com Docker Compose: </br>
 Ainda na pasta raiz do projeto, execute o comando Docker Compose para iniciar os contêineres do PostgreSQL, PgAdmin e Redis:
@@ -159,14 +159,14 @@ Explore cada serviço para entender melhor sua funcionalidade.
 ### 6 Como Autenticar para acessar os demais endpoints
 
 #### 6.1 Primeiro vocês irão criar um usuário
-![image](https://github.com/user-attachments/assets/7ce3f97b-b148-4734-897d-4d33d603b4bc)
+<img src="https://github.com/user-attachments/assets/7ce3f97b-b148-4734-897d-4d33d603b4bc" width="500px">
 
 #### 6.2 Efetuar o login
-![image](https://github.com/user-attachments/assets/05b180ab-911d-4fa3-8335-086a71125c9d)
-![image](https://github.com/user-attachments/assets/6d688f3c-b528-4cee-92b6-2b56df5d41e6)
+<img src="https://github.com/user-attachments/assets/05b180ab-911d-4fa3-8335-086a71125c9d" width="500px"> </br>
+<img src="https://github.com/user-attachments/assets/6d688f3c-b528-4cee-92b6-2b56df5d41e6" width="500px">
 
 #### 6.3 Informar o bearer token no header </br>
-![image](https://github.com/user-attachments/assets/595ae41d-d024-4e1d-888e-6b4f4d5c5b92)
+<img src="https://github.com/user-attachments/assets/595ae41d-d024-4e1d-888e-6b4f4d5c5b92" width="500px">
 
 ✔️ Pronto agora você consegue acessar os demais endpoints que exigem autenticação.
 
@@ -175,13 +175,16 @@ Explore cada serviço para entender melhor sua funcionalidade.
 <b>URL:</b> http://localhost:5050/
 
 #### 7.1 Defina a senha mestre como <b>postgresl</b>:
-![image](https://github.com/user-attachments/assets/19bb09b0-84a1-47ca-a5ee-624057b2e6ed)
+<img src="https://github.com/user-attachments/assets/19bb09b0-84a1-47ca-a5ee-624057b2e6ed" width="500px">
+
 #### 7.2 Configure um novo servidor:
-![image](https://github.com/user-attachments/assets/8af569c0-c263-4c46-8497-2e1a3db767d0)
+<img src="https://github.com/user-attachments/assets/8af569c0-c263-4c46-8497-2e1a3db767d0" width="500px">
+
 #### 7.3 Para a autenticação, utilize a senha postgres: 
-![image](https://github.com/user-attachments/assets/207c4564-b254-46e0-ba78-c65bfa0ce091)
+<img src="https://github.com/user-attachments/assets/207c4564-b254-46e0-ba78-c65bfa0ce091" width="500px">
+
 #### 7.4 Pronto pgAdmin configurado: </br>
-![image](https://github.com/user-attachments/assets/88114c1d-3aad-461c-8edf-db6f1143afe6)
+<img src="https://github.com/user-attachments/assets/88114c1d-3aad-461c-8edf-db6f1143afe6" width="500px">
 
 ##
 ### 8 Acessar o Redis pelo docker
