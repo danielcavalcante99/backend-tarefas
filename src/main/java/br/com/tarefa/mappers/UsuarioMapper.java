@@ -11,9 +11,9 @@ import br.com.tarefa.entities.Usuario;
 public interface UsuarioMapper {
 	
 	@Mapping(target = "tarefas", ignore = true)
-	Usuario UsuarioDTOToUsuario(UsuarioDTO dto);
+	Usuario usuarioDTOToUsuario(UsuarioDTO dto);
 	
-	UsuarioDTO UsuarioToUsuarioDTO(Usuario entity);
+	UsuarioDTO usuarioToUsuarioDTO(Usuario entity);
 	
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "dataCriacao", ignore = true)
